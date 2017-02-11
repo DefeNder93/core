@@ -1,0 +1,2 @@
+There are 2 objects - car and traffic light. Car waiting for green light and start (or do other actions on other lights).
+Traffic light has 3 states - red, yellow and green. Every time it change color it sends a request.
