@@ -1,0 +1,3 @@
+Let's suppose we have 2 objects - plane and dispatcher. Plane is going to start and waiting for permission. A pilot
+ sends request to dispatcher and asks him if he can start. So, the pilot is fire a request for launch. Dispatcher can allow or
+ reject it. Plane starts as soon as it gets the request.
