@@ -6,14 +6,14 @@ function createVisitor(name, preferredType) {
             var _this = this;
             var plate = CatchRequest(Cook_putPlate);
 
-            console.log('plateType ' + plate.type);
+            console.log(name + ": I see plateType " + plate.type);
 
-            return function(success, error) {
-                if (plate.type === _this.preferredType) {
-                    success(_this.name)
+            if (plate.type === _this.preferredType) {
+                return function(success, error) {
+                    console.log(name + ": uhhmmmm! I've eaten the " + plate.type);
+                    success();
                 }
             }
-
         }
     };
 }
