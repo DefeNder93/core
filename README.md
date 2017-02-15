@@ -196,3 +196,29 @@ When state has been changed, the Event `Object.mainState.GoRunning` fires. And i
   }
  }
 ```
+#Examples
+
+Examples can be found in /examples directory. There is index.html file for each example. Just open it in any browser to run an example.
+
+##Plane
+
+Location: /examples/requests/plane
+
+Let's suppose we have 2 objects - plane and dispatcher. Plane is going to start and waiting for permission. A pilot
+ sends request to dispatcher and asks him if he can start. So, the pilot is fire a request for launch. Dispatcher can allow or
+ reject it. Plane starts as soon as it gets the request.
+
+##Restaurant
+
+Location: /examples/requests/restaurant
+
+There is a Japanese restaurant with plates that moving in a circle on a table near the visitors. A cook puts the plate on the table
+ when it's ready. There are few types of plates and users can choose and take plate if they like it. If one visitor take a plate, next person can't take it.
+ He have to wait for a new one. If plate make a circle and no one take it the cook give that plate to a cat.
+
+##Traffic Light
+
+Location: /examples/requests/trafficLight
+
+There are 2 objects - car and traffic light. Car waiting for green light and start (or do other actions on other lights).
+Traffic light has 3 states - red, yellow and green. Every time it change color it sends a request.

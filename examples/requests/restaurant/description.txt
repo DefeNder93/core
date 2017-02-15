@@ -1,3 +1,0 @@
-There is a Japanese restaurant with plates that moving in a circle on a table near the visitors. A cook puts the plate on the table
- when it's ready. There are few types of plates and users can choose and take plate if they like it. If one visitor take a plate, next person can't take it.
- He have to wait for a new one. If plate make a circle and no one take it the cook give that plate to a cat.
