@@ -601,7 +601,9 @@ Core = {
         return stack;
     }
     , processGlobal: function() {
-        CatchEvent(DOM_Init);
+        if (typeof window != 'undefined') {
+            CatchEvent(DOM_Init);
+        }
 
         var ns = [global.classes, global], to_check = Core.__check_classes.splice(0);
         for(var i = 0 ; i < to_check.length; i++) {
@@ -614,11 +616,11 @@ Core = {
             }
         }
 
-        for(var i in window) {
-            if(i.match(/^[A-Z]/) && window.hasOwnProperty(i)) {
+        for(var i in global) {
+            if(i.match(/^[A-Z]/) && global.hasOwnProperty(i)) {
                 //if(i instanceof Core.RequestPoint) {
                 //}
-                Core.processObject(window[i])
+                Core.processObject(global[i])
             }
         }
     }
@@ -689,7 +691,9 @@ if(typeof window != 'undefined') {
             old_onresize = window.onresize || document.body.onresize;
         }
 
-        FireEvent(new DOM_Init());
+        if (typeof window != 'undefined') {
+            FireEvent(new DOM_Init());
+        }
 
         FireEvent(new DOM_Changed({element: document.body}));
 
