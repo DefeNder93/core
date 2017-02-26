@@ -11,14 +11,25 @@ describe("Traffic Light", function() {
         Core.processGlobal();
     });
 
-    it("Test traffic light", function(done) {
-        setTimeout(function(){
-            assert.equal(Car.moving, false);
-        }, 3000);
+    it("Cars should move after Traffic Light state becomes green", function(done) {
+        reset();
         setTimeout(function(){
             assert.equal(Car.moving, true);
             done();
-        }, 7000);
+        }, 5000);
     });
+
+    it("cars should not move after Traffic Light state becomes red or yellow", function(done) {
+        reset();
+        setTimeout(function(){
+            assert.equal(Car.moving, false);
+            done();
+        }, 3000);
+    });
+
+    function reset() {
+        TrafficLight.state.go('Yellow');
+        Car.moving = false;
+    }
 
 });
