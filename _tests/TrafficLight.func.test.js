@@ -1,6 +1,6 @@
 var assert = require('assert');
 describe("Traffic Light", function() {
-    var include = require('../helpers/Utils').include;
+    var include = require('./helpers/Utils').include;
     include('Core.js');
     Core.registerEventPoint('DOM_Init'     , {log: false});
     include('examples/states/trafficLight/Car.js');

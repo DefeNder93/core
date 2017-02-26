@@ -1,7 +1,7 @@
 var assert = require('assert');
 describe("Plane", function() {
     context('main context', function(){
-        var include = require('../helpers/Utils').include;
+        var include = require('./helpers/Utils').include;
 
         include('Core.js');
         //Core.registerEventPoint('DOM_Init'     , {log: false});

@@ -1,2 +1,3 @@
+_tests
 --recursive
 --timeout=10000
