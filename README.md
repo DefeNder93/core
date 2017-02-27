@@ -218,16 +218,16 @@ There is a Japanese restaurant with plates that moving in a circle on a table ne
 
 ##Traffic Light
 
-Location: /examples/requests/trafficLight
+Location: /examples/states/trafficLight
 
 There are 2 objects - car and traffic light. Car waiting for green light and start (or do other actions on other lights).
 Traffic light has 3 states - red, yellow and green. Every time it change color it sends a request.
 
 #Unit tests
 
-We using Mocha with NodeJs for unit tests. Specs can be found in /test directory. To run tests:
+We using Mocha with NodeJs for unit tests. Specs can be found in /_tests directory. To run tests:
 
 ```
 npm update
-node ./node_modules/mocha/bin/mocha
+npm test
 ```
