@@ -307,7 +307,7 @@ Core = {
                     if(!_this._handled) {
                         _this.__proto__._handled = true;
 
-                        var SuccessEvent = new global[request._request + '_Success'](data);
+                        var SuccessEvent = new global[request._request.split('ngCoreService.g.').join('') + '_Success'](data);
                         SuccessEvent.__proto__ = {__proto__: SuccessEvent.__proto__, request: request};
                         FireEvent(SuccessEvent);
                     }
@@ -323,7 +323,7 @@ Core = {
                 }
                 if(!_this._handled) {
                     _this.__proto__._handled = true;
-                    var FailEvent = new global[request._request + '_Fail'](data);
+                    var FailEvent = new global[request._request.split('ngCoreService.g.').join('') + '_Fail'](data);
                     FailEvent.__proto__ = {__proto__: FailEvent.__proto__, request: request};
                     FireEvent(FailEvent);
                 }
@@ -377,10 +377,10 @@ Core = {
         if(global[name] instanceof Core.EventPoint) return;
 
         eval('var eventConstructor = function ' + name + '(data) { \n' +
-        '   if(!(this instanceof ' + name + ')) return new ' + name + '(data) \n' +
-        '   Core._clone(data, this); \n' +
-        '   this._event = ' + name + '._event; \n' +
-        '}');
+            '   if(!(this instanceof ' + name + ')) return new ' + name + '(data) \n' +
+            '   Core._clone(data, this); \n' +
+            '   this._event = ' + name + '._event; \n' +
+            '}');
 
         eventConstructor.prototype = {__proto__: options && options.parent || Core.EventPoint.prototype, constructor: eventConstructor};
         eventConstructor.listeners = [];
@@ -396,11 +396,11 @@ Core = {
         if(global[name] instanceof Core.RequestPoint) return;
 
         eval('var requestConstructor = function ' + name + '(data) { \n' +
-        '   if(!(this instanceof ' + name + ')) return new ' + name + '(data) \n' +
-        '   Core._clone(data, this); \n' +
-        '   this._request = ' + name + '._request; \n' +
-        '   this.__proto__ = {__proto__: this.__proto__, _handlers: [], _handlers_results: [], _cb: null, _fail_cb: null, _started: false, _handled: false} \n' +
-        '}');
+            '   if(!(this instanceof ' + name + ')) return new ' + name + '(data) \n' +
+            '   Core._clone(data, this); \n' +
+            '   this._request = ' + name + '._request; \n' +
+            '   this.__proto__ = {__proto__: this.__proto__, _handlers: [], _handlers_results: [], _cb: null, _fail_cb: null, _started: false, _handled: false} \n' +
+            '}');
 
         requestConstructor.prototype = {__proto__: options && options.parent || Core.RequestPoint.prototype, constructor: requestConstructor};
         requestConstructor._request  = name;
@@ -497,14 +497,13 @@ Core = {
         }
         for( var method in _class ) {
             var events;
-            var isGetter = _class instanceof Object && Object.getOwnPropertyDescriptor(_class, method) && Object.getOwnPropertyDescriptor(_class, method).get;
-            // check if property is actually getter to prevent getters from calling (it can be js errors because of calling)
-            if (!isGetter && _class[method] instanceof Function ) {
+            if( _class[method] instanceof Function ) {
                 if( events = _class[method].toString().replace(/\n/g,"").match(/(Core\.)?(CatchEvent|CatchRequest)\(([^\)]+)\)/m) ) {
                     events = events[3].replace(/^[ \t\n\r]*|[ \t\n\r]*$/mg,"").split(/[ \t\n\r]*,[ \t\n\r]*/);
                     for( var i = 0; i < events.length; i++ ) {
+
                         var
-                            parts  = events[i].split('.')
+                            parts  = events[i].split('ngCoreService.g.').join('').split('.')
                             , cursor = global;
 
                         for( var n = 0; n < parts.length; n++) {
@@ -603,7 +602,9 @@ Core = {
         return stack;
     }
     , processGlobal: function() {
-        CatchEvent(DOM_Init);
+        if (typeof window != 'undefined') {
+            CatchEvent(DOM_Init);
+        }
 
         var ns = [global.classes, global], to_check = Core.__check_classes.splice(0);
         for(var i = 0 ; i < to_check.length; i++) {
@@ -616,14 +617,18 @@ Core = {
             }
         }
 
-        for(var i in window) {
-            if(i.match(/^[A-Z]/) && window.hasOwnProperty(i)) {
+        for(var i in global) {
+            if((i.match(/^[A-Z]/) || global._customGlobal) && global.hasOwnProperty(i)) {
                 //if(i instanceof Core.RequestPoint) {
                 //}
-                Core.processObject(window[i])
+                Core.processObject(global[i])
             }
         }
     }
+    , setGlobalObject: function(obj) {
+        global = obj;
+    }
+
 };
 
 Core.RequestPoint.prototype.addHandler = function addHandler(handler) {
@@ -691,7 +696,9 @@ if(typeof window != 'undefined') {
             old_onresize = window.onresize || document.body.onresize;
         }
 
-        FireEvent(new DOM_Init());
+        if (typeof window != 'undefined') {
+            FireEvent(new DOM_Init());
+        }
 
         FireEvent(new DOM_Changed({element: document.body}));
 
