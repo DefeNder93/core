@@ -1,14 +1,12 @@
 angular.module('demoApp', ['ngCore'])
     .controller('MainController', function($scope, $http, ngCoreService){
-        ngCoreService.EnableEventsTracking();
-        
-        // --------
-        Core.registerRequestPoint('Plane_GetPermissionRq');
+
+        ngCoreService.registerRequestPoint('Plane_GetPermissionRq');
 
         var runwayState = false; // true - free, false - busy
         var Dispatcher = {
             processStartRequest: function() {
-                CatchRequest(ngCoreService.g.Plane_GetPermissionRq);
+                ngCoreService.CatchRequest(ngCoreService.g.Plane_GetPermissionRq);
 
                 return function(success, error) {
                     runwayState ? success() : error();
@@ -22,7 +20,7 @@ angular.module('demoApp', ['ngCore'])
             started: false,
             askPermission: function() {
                 var _this = this;
-                FireRequest(new ngCoreService.g.Plane_GetPermissionRq, function() {
+                ngCoreService.FireRequest(new ngCoreService.g.Plane_GetPermissionRq, function() {
                     console.log('Plane: Permission was received, start');
                     _this.started = true;
                 }, function() {
@@ -39,11 +37,8 @@ angular.module('demoApp', ['ngCore'])
             }
         };
         ngCoreService.registerObject(Plane);
-
-        Core.processGlobal();
+        ngCoreService.processGlobal();
         Plane.waitForStart();
-        // --------
-
 
         setTimeout(function(){
             console.log('runwayState -> true');
