@@ -4,6 +4,7 @@ angular.module('ngCore', [])
         this.global = this.g = [];
         this.global._customGlobal = true;
         this.core.setGlobalObject(this.global);
+        this.core.setEventPrefix('ngCore.g.');
 
         this.EnableEventsTracking = this.core.EnableEventsTracking.bind(this.core);
         this.DisableEventsTracking = this.core.DisableEventsTracking.bind(this.core);

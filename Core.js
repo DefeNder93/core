@@ -53,6 +53,7 @@ Core = {
     __event_stack: []
     , _eventsTracking: 0
     , _eventsTrackingObjects: []
+    , _eventPrefix: null
     , log: (function() {
         var a = [];
         a.__proto__ = { __proto__: a.__proto__, push: function() {
@@ -306,8 +307,8 @@ Core = {
                     }
                     if(!_this._handled) {
                         _this.__proto__._handled = true;
-
-                        var SuccessEvent = new global[request._request.split('ngCore.g.').join('') + '_Success'](data);
+                        var requestName = Core._eventPrefix ? request._request.split(Core._eventPrefix).join('') : request._request;
+                        var SuccessEvent = new global[requestName + '_Success'](data);
                         SuccessEvent.__proto__ = {__proto__: SuccessEvent.__proto__, request: request};
                         FireEvent(SuccessEvent);
                     }
@@ -323,7 +324,8 @@ Core = {
                 }
                 if(!_this._handled) {
                     _this.__proto__._handled = true;
-                    var FailEvent = new global[request._request.split('ngCore.g.').join('') + '_Fail'](data);
+                    var requestName = Core._eventPrefix ? request._request.split(Core._eventPrefix).join('') : request._request;
+                    var FailEvent = new global[requestName + '_Fail'](data);
                     FailEvent.__proto__ = {__proto__: FailEvent.__proto__, request: request};
                     FireEvent(FailEvent);
                 }
@@ -501,9 +503,9 @@ Core = {
                 if( events = _class[method].toString().replace(/\n/g,"").match(/(Core\.)?(CatchEvent|CatchRequest)\(([^\)]+)\)/m) ) {
                     events = events[3].replace(/^[ \t\n\r]*|[ \t\n\r]*$/mg,"").split(/[ \t\n\r]*,[ \t\n\r]*/);
                     for( var i = 0; i < events.length; i++ ) {
-
+                        var event = Core._eventPrefix ? events[i].split(Core._eventPrefix).join('') : events[i];
                         var
-                            parts  = events[i].split('ngCore.g.').join('').split('.')
+                            parts  = event.split('.')
                             , cursor = global;
 
                         for( var n = 0; n < parts.length; n++) {
@@ -628,7 +630,9 @@ Core = {
     , setGlobalObject: function(obj) {
         global = obj;
     }
-
+    , setEventPrefix: function(prefix) {
+        Core._eventPrefix = prefix;
+    }
 };
 
 Core.RequestPoint.prototype.addHandler = function addHandler(handler) {
