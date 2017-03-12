@@ -196,3 +196,37 @@ When state has been changed, the Event `Object.mainState.GoRunning` fires. And i
   }
  }
 ```
+
+###Core-angular
+
+Core-angular is a wrapper that integrates Core and AngularJS 1.x.
+
+####Installing
+
+You have to include Core and AngularJS to your project. Like that:
+
+ ```html
+  <script src="../node_modules/angular/angular.js"></script>
+  <script src="../Core.js"></script>
+  <script src="core-angular.js"></script>
+ ```
+
+ Then add 'ngCore' in your module list. Now you can inject ngCore service and use it inside
+ of angular entities. You don't need to worry about processGlobal any more, but it's necessary to use
+ ngCore.registerObj method any time you want to object with Core methods. ngCore.g - is new global
+ object that is used instead of Window. For example:
+
+  ```js
+  ngCore.registerRequestPoint('Plane_GetPermissionRq');
+
+  var Dispatcher = ngCore.registerObj({
+      processStartRequest: function() {
+          ngCore.CatchRequest(ngCore.g.Plane_GetPermissionRq);
+              return function(success, error) {
+                  runwayState ? success() : error();
+              }
+          }
+  });
+  ```
+
+  Full example can be found in /core-angular directory
