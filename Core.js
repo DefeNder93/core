@@ -307,7 +307,7 @@ Core = {
                     if(!_this._handled) {
                         _this.__proto__._handled = true;
 
-                        var SuccessEvent = new global[request._request.split('ngCoreService.g.').join('') + '_Success'](data);
+                        var SuccessEvent = new global[request._request.split('ngCore.g.').join('') + '_Success'](data);
                         SuccessEvent.__proto__ = {__proto__: SuccessEvent.__proto__, request: request};
                         FireEvent(SuccessEvent);
                     }
@@ -323,7 +323,7 @@ Core = {
                 }
                 if(!_this._handled) {
                     _this.__proto__._handled = true;
-                    var FailEvent = new global[request._request.split('ngCoreService.g.').join('') + '_Fail'](data);
+                    var FailEvent = new global[request._request.split('ngCore.g.').join('') + '_Fail'](data);
                     FailEvent.__proto__ = {__proto__: FailEvent.__proto__, request: request};
                     FireEvent(FailEvent);
                 }
@@ -503,7 +503,7 @@ Core = {
                     for( var i = 0; i < events.length; i++ ) {
 
                         var
-                            parts  = events[i].split('ngCoreService.g.').join('').split('.')
+                            parts  = events[i].split('ngCore.g.').join('').split('.')
                             , cursor = global;
 
                         for( var n = 0; n < parts.length; n++) {

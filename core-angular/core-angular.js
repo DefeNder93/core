@@ -1,5 +1,5 @@
 angular.module('ngCore', [])
-    .service('ngCoreService', function() {
+    .service('ngCore', function() {
         this.core = Core;
         this.global = this.g = [];
         this.global._customGlobal = true;
@@ -20,9 +20,9 @@ angular.module('ngCore', [])
         this.state = this.core.state.bind(this.core);
         this.processGlobal = this.core.processGlobal.bind(this.core);
 
-        this.registerObject = function(obj) {
-            this.global.push(obj);
+        this.registerObj = function(el) {
+            this.global.push(el);
+            this.processObject(el);
+            return el;
         };
-
-        //this.core.processGlobal();
     });

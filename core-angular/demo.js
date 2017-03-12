@@ -1,26 +1,29 @@
 angular.module('demoApp', ['ngCore'])
-    .controller('MainController', function($scope, $http, ngCoreService){
-
-        ngCoreService.registerRequestPoint('Plane_GetPermissionRq');
+    .controller('MainController', function($scope, $http, ngCore){
+        ngCore.registerRequestPoint('Plane_GetPermissionRq');
 
         var runwayState = false; // true - free, false - busy
-        var Dispatcher = {
+        setTimeout(function(){
+            console.log('runwayState -> true');
+            runwayState = true;
+        }, 4000);
+
+        var Dispatcher = ngCore.registerObj({
             processStartRequest: function() {
-                ngCoreService.CatchRequest(ngCoreService.g.Plane_GetPermissionRq);
+                ngCore.CatchRequest(ngCore.g.Plane_GetPermissionRq);
 
                 return function(success, error) {
                     runwayState ? success() : error();
                 }
 
             }
-        };
-        ngCoreService.registerObject(Dispatcher);  // .processStartRequest
+        });
 
-        var Plane = {
+        var Plane = ngCore.registerObj({
             started: false,
             askPermission: function() {
                 var _this = this;
-                ngCoreService.FireRequest(new ngCoreService.g.Plane_GetPermissionRq, function() {
+                ngCore.FireRequest(new ngCore.g.Plane_GetPermissionRq, function() {
                     console.log('Plane: Permission was received, start');
                     _this.started = true;
                 }, function() {
@@ -35,13 +38,8 @@ angular.module('demoApp', ['ngCore'])
                     }
                 }, 3000);
             }
-        };
-        ngCoreService.registerObject(Plane);
-        ngCoreService.processGlobal();
+        });
+
         Plane.waitForStart();
 
-        setTimeout(function(){
-            console.log('runwayState -> true');
-            runwayState = true;
-        }, 4000);
     });
