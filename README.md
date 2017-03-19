@@ -229,4 +229,27 @@ You have to include Core and AngularJS to your project. Like that:
   });
   ```
 
-  Full example can be found in /core-angular directory
+  Full example can be found in /core-angular/examples/plane directory.
+
+  In case if you want to use Core states with AngularJS you have to put object name During registration like that:
+
+  ```js
+  var Car = ngCore.registerObj({
+              moving: false,
+              redReaction: function() {
+                  ngCore.CatchEvent(ngCore.g.TrafficLight.state.GoRed);
+                  console.log(this.moving ? 'Car: Already Started' : 'Car: Stop');
+              },
+              yellowReaction: function() {
+                  ngCore.CatchEvent(ngCore.g.TrafficLight.state.GoYellow);
+                  console.log(this.moving ? 'Car: Already Started' : 'Car: Prepare');
+              },
+              greenReaction: function() {
+                  ngCore.CatchEvent(ngCore.g.TrafficLight.state.GoGreen);
+                  console.log(this.moving ? 'Car: Already Started' : 'Car: Go');
+                  this.moving = true;
+              }
+          }, 'Car');
+  ```
+
+  Full example can be found here: /core-angular/examples/trafficLight.

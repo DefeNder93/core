@@ -1,5 +1,5 @@
 angular.module('demoApp', ['ngCore'])
-    .controller('MainController', function($scope, $http, ngCore){
+    .controller('MainController', function($scope, ngCore){
         ngCore.registerRequestPoint('Plane_GetPermissionRq');
 
         var runwayState = false; // true - free, false - busy

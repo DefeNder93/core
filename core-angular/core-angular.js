@@ -21,8 +21,8 @@ angular.module('ngCore', [])
         this.state = this.core.state.bind(this.core);
         this.processGlobal = this.core.processGlobal.bind(this.core);
 
-        this.registerObj = function(el) {
-            this.global.push(el);
+        this.registerObj = function(el, name) {
+            name ? this.global[name] = el : this.global.push(el);
             this.processObject(el);
             return el;
         };
