@@ -482,7 +482,7 @@ Core = {
             if(_class.Init) {
                 FireEvent(new _class.Init);
             }
-            if( Object.defineProperty && Object.getOwnPropertyDescriptor(_class, '__inited__') && Object.getOwnPropertyDescriptor(_class, '__inited__').writable !== false ) {
+            if (Object.defineProperty) {
                 Object.defineProperty(_class, '__inited__', { value: true});
             } else {
                 _class.__inited__ = true
@@ -492,7 +492,7 @@ Core = {
     , processObject: function(object) {
         var _class = object;
 
-        if( _class.hasOwnProperty('__inited__') && _class.__inited__ )
+        if( _class.hasOwnProperty('__inited__') && _class.__inited__)
             return;
         if( _class.__init instanceof Function ) {
             setImmediate(function() {
@@ -543,7 +543,11 @@ Core = {
                 console.error(e.stack ? e.message : e, e.stack ? e.stack : 'no stack provided');
             }
         }
-        _class.__inited__ = true;
+        if (Object.defineProperty) {
+            Object.defineProperty(_class, '__inited__', { value: true});
+        } else {
+            _class.__inited__ = true
+        }
 
         return object;
     }
