@@ -603,10 +603,7 @@ Core = {
         return stack;
     }
     , processGlobal: function() {
-        if (typeof window != 'undefined') {
-            CatchEvent(DOM_Init);
-        }
-
+        
         var ns = [global.classes, global], to_check = Core.__check_classes.splice(0);
         for(var i = 0 ; i < to_check.length; i++) {
             for(var j = 0; j < ns.length; j++) {
