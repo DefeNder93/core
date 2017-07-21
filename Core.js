@@ -480,7 +480,7 @@ Core = {
             if(_class.Init) {
                 FireEvent(new _class.Init);
             }
-            if( Object.defineProperty && Object.getOwnPropertyDescriptor(_class, '__inited__') && Object.getOwnPropertyDescriptor(_class, '__inited__').writable !== false ) {
+            if (Object.defineProperty) {
                 Object.defineProperty(_class, '__inited__', { value: true});
             } else {
                 _class.__inited__ = true
@@ -490,7 +490,7 @@ Core = {
     , processObject: function(object) {
         var _class = object;
 
-        if( _class.hasOwnProperty('__inited__') && _class.__inited__ )
+        if( _class.hasOwnProperty('__inited__') && _class.__inited__)
             return;
         if( _class.__init instanceof Function ) {
             setImmediate(function() {
@@ -499,7 +499,9 @@ Core = {
         }
         for( var method in _class ) {
             var events;
-            if( _class[method] instanceof Function ) {
+            var isGetter = _class instanceof Object && Object.getOwnPropertyDescriptor(_class, method) && Object.getOwnPropertyDescriptor(_class, method).get;
+            // check if property is actually getter to prevent getters from calling (it can be js errors because of calling)
+            if (!isGetter && _class[method] instanceof Function ) {
                 if( events = _class[method].toString().replace(/\n/g,"").match(/(Core\.)?(CatchEvent|CatchRequest)\(([^\)]+)\)/m) ) {
                     events = events[3].replace(/^[ \t\n\r]*|[ \t\n\r]*$/mg,"").split(/[ \t\n\r]*,[ \t\n\r]*/);
                     for( var i = 0; i < events.length; i++ ) {
@@ -540,7 +542,11 @@ Core = {
                 console.error(e.stack ? e.message : e, e.stack ? e.stack : 'no stack provided');
             }
         }
-        _class.__inited__ = true;
+        if (Object.defineProperty) {
+            Object.defineProperty(_class, '__inited__', { value: true});
+        } else {
+            _class.__inited__ = true
+        }
 
         return object;
     }
