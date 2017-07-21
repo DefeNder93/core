@@ -389,6 +389,8 @@ Core = {
 
         global[name] = eventConstructor;
 
+        eventConstructor.__proto__ = Core.EventPoint.prototype;
+
         return global[name];
     }
     , registerRequestPoint: function(name, options) {
@@ -408,6 +410,8 @@ Core = {
         requestConstructor.options   = options;
 
         global[name] = requestConstructor;
+
+        requestConstructor.__proto__ = Core.RequestPoint.prototype;
 
         this.registerEventPoint(name + '_Start'  , {log: false});
         this.registerEventPoint(name + '_Success', {log: !options || options.log});
@@ -478,7 +482,7 @@ Core = {
             if(_class.Init) {
                 FireEvent(new _class.Init);
             }
-            if( Object.defineProperty && Object.getOwnPropertyDescriptor(_class, '__inited__') && Object.getOwnPropertyDescriptor(_class, '__inited__').writable !== false ) {
+            if (Object.defineProperty) {
                 Object.defineProperty(_class, '__inited__', { value: true});
             } else {
                 _class.__inited__ = true
@@ -488,7 +492,7 @@ Core = {
     , processObject: function(object) {
         var _class = object;
 
-        if( _class.hasOwnProperty('__inited__') && _class.__inited__ )
+        if( _class.hasOwnProperty('__inited__') && _class.__inited__)
             return;
         if( _class.__init instanceof Function ) {
             setImmediate(function() {
@@ -539,9 +543,50 @@ Core = {
                 console.error(e.stack ? e.message : e, e.stack ? e.stack : 'no stack provided');
             }
         }
-        _class.__inited__ = true;
+        if (Object.defineProperty) {
+            Object.defineProperty(_class, '__inited__', { value: true});
+        } else {
+            _class.__inited__ = true
+        }
 
         return object;
+    }
+    , detachObject: function(object) {
+        var _class = object;
+
+        if( _class.hasOwnProperty('__inited__') && _class.__inited__ ) {
+            for( var method in _class ) {
+                var events;
+                var isGetter = _class instanceof Object && Object.getOwnPropertyDescriptor(_class, method) && Object.getOwnPropertyDescriptor(_class, method).get;
+                // check if property is actually getter to prevent getters from calling (it can be js errors because of calling)
+                if (!isGetter && _class[method] instanceof Function ) {
+                    if( events = _class[method].toString().replace(/\n/g,"").match(/(Core\.)?(CatchEvent|CatchRequest)\(([^\)]+)\)/m) ) {
+                        events = events[3].replace(/^[ \t\n\r]*|[ \t\n\r]*$/mg,"").split(/[ \t\n\r]*,[ \t\n\r]*/);
+                        
+                        for( var i = 0; i < events.length; i++ ) {
+                            var
+                                parts  = events[i].split('.')
+                                , cursor = global;
+
+                            for( var n = 0; n < parts.length; n++) {
+                                cursor = cursor[parts[n]];
+                            }
+
+                            if( cursor && cursor.listeners ) {
+                                for( var c = 0; c < cursor.listeners.length; c++ ) {
+                                    var l = cursor.listeners[c];
+                                    if(l[1] == method && l[0] === _class) {
+                                        cursor.listeners.splice(c, 1);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            _class.__inited__ = false;
+        }
     }
     , CatchEvent:   function() { return Core.__event_stack[0]; /* supress no arguments warning */ arguments;}
     , CatchRequest: function() { return Core.__event_stack[0]; /* supress no arguments warning */ arguments;}
@@ -616,7 +661,7 @@ Core = {
         }
 
         for(var i in global) {
-            if(i.match(/^[A-Z]/) && global.hasOwnProperty(i)) {
+            if(i.match(/^[A-Z]/) && global.hasOwnProperty(i) && global[i]) {
                 //if(i instanceof Core.RequestPoint) {
                 //}
                 Core.processObject(global[i])
